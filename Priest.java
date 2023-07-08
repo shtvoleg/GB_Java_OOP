@@ -1,7 +1,7 @@
 /*
 Класс Священник - наследник класса Заклинатель
- 
-Обучающийся: ШИТОВ Олег Владимирович, "Разработчик Python", поток 4544, будни, утро.  07.07.2023.
+
+Обучающийся: ШИТОВ Олег Владимирович, "Разработчик Python", поток 4544, будни, утро.  08.07.2023.
 */
 
 class Priest extends Spirit {
@@ -21,4 +21,8 @@ class Priest extends Spirit {
     public void influence() {
         System.out.println("Priest " + name + " influences with prayers.");
     }
+    // @Override
+    // public String getInfo() {
+    // return super.getInfo();
+    // }
 }

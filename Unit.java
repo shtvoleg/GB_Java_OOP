@@ -1,19 +1,21 @@
 /*
-Абстрактный класс Юнит. Имеет наследников:
+Абстрактный класс юнит. Имеет наследников:
 - абстрактный класс Shooter (Стрелок);
 - абстрактный класс Infantry (Пехота);
 - абстрактный класс Spirit (Заклинатели);
 - класс Peasant (Крестьянин);
- 
-Обучающийся: ШИТОВ Олег Владимирович, "Разработчик Python", поток 4544, будни, утро.  07.07.2023.
+
+Обучающийся: ШИТОВ Олег Владимирович, "Разработчик Python", поток 4544, будни, утро.  08.07.2023.
 */
 
-public class Unit {
+import java.util.Random;
+
+public abstract class Unit {
     protected String name; // имя юнита
     protected int health; // запас здоровья
     protected int damage; // сумма повреждений
 
-    public Unit(String name, int health, int damage) { // конструктор
+    public Unit(String name, int health, int damage) { // конструктор с 3-мя параметрами
         this.name = name;
         if (health < 0) {
             this.health = 0;
@@ -29,5 +31,14 @@ public class Unit {
         } else {
             this.damage = damage;
         }
+    }
+
+    public Unit() { // конструктор без параметров
+        this("", 100, 0);
+    } // конструктор без параметров
+
+    public String getInfo() {
+        String s = String.valueOf(Name.values()[new Random().nextInt(Name.values().length)]);
+        return this.name + " " + s;
     }
 }
