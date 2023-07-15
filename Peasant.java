@@ -1,23 +1,20 @@
 /*
-Класс крестьянин. Имеет предка: класс юнит. Имеет метод: приносить стрелу.
+Обучающийся: ШИТОВ Олег Владимирович, "Разработчик Python", поток 4544, будни, утро.  15.07.2023.
 
-Обучающийся: ШИТОВ Олег Владимирович, "Разработчик Python", поток 4544, будни, утро.  08.07.2023.
+Класс крестьянин. Имеет предка: класс юнит. Имеет метод: приносить стрелу.
 */
 
 class Peasant extends Unit {
-    public Peasant(String name, int health, int damage) { // конструктор с 3-мя параметрами
-        super(name, health, damage);
+    public Peasant(String name, int health, int damage, int speed, int x, int y) { // конструктор с 6-ю параметрами
+
+        super(name, health, damage, speed, x, y);
     }
 
     public Peasant() { // конструктор без параметров
-        this("", 100, 0);
+        this("", 100, 0, 0, 0, 0);
     }
 
     public void bring_Arrow() {
-        System.out.println("Peasant " + name + " brings an arrow.");
-    }
-    // @Override
-    // public String getInfo() {
-    // return super.getInfo();
-    // }
+        System.out.println("Крестьянин " + name + " принёс стрелу.");
+    } // метод находится в работе
 }

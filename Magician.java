@@ -1,14 +1,14 @@
 /*
-Класс Мог - наследник класса Заклинатель
+Обучающийся: ШИТОВ Олег Владимирович, "Разработчик Python", поток 4544, будни, утро.  15.07.2023.
 
-Обучающийся: ШИТОВ Олег Владимирович, "Разработчик Python", поток 4544, будни, утро.  08.07.2023.
+Класс Мог - наследник класса Заклинатель
 */
 
 class Magician extends Spirit {
     private int energy;
 
-    public Magician(String name, int health, int energy) { // конструктор с 4-мя параметорами
-        super(name, health, energy);
+    public Magician(String name, int health, int energy, int speed, int x, int y) { // конструктор с 6-ю параметрами
+        super(name, health, energy, speed, x, y);
         if (energy < 0) {
             this.energy = 0;
         } else if (energy > 10) {
@@ -19,14 +19,10 @@ class Magician extends Spirit {
     }
 
     public Magician() { // конструктор без параметоров
-        super("", 100, 10);
-    }
+        super("Маг", 100, 10, 0, 1, 0);
+    } // конструктор без параметров
 
-    // @Override
-    // public String getInfo() {
-    // return super.getInfo();
-    // }
     public void influence() {
-        System.out.println("Magician " + name + " influences with magic.");
-    }
+        System.out.println("Маг " + name + " применил магию.");
+    } // метод находится в работе
 }

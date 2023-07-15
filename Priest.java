@@ -1,28 +1,29 @@
 /*
-Класс Священник - наследник класса Заклинатель
+Обучающийся: ШИТОВ Олег Владимирович, "Разработчик Python", поток 4544, будни, утро.  15.07.2023.
 
-Обучающийся: ШИТОВ Олег Владимирович, "Разработчик Python", поток 4544, будни, утро.  08.07.2023.
+Класс Священник - наследник класса Заклинатель
 */
 
 class Priest extends Spirit {
-    private int elixir;
+    private int energy;
 
-    public Priest(String name, int health, int damage, int elixir) {
-        super(name, health, damage);
-        if (elixir < 0) {
-            this.elixir = 0;
-        } else if (elixir > 10) {
-            this.elixir = 10;
+    public Priest(String name, int health, int energy, int speed, int x, int y) { // конструктор с 7-ю параметрами
+
+        super(name, health, energy, speed, x, y);
+        if (energy < 0) {
+            this.energy = 0;
+        } else if (energy > 10) {
+            this.energy = 10;
         } else {
-            this.elixir = elixir;
+            this.energy = energy;
         }
     }
 
+    public Priest() {
+        super("Монах", 100, 10, 0, 0, 0);
+    } // конструктор без параметров
+
     public void influence() {
-        System.out.println("Priest " + name + " influences with prayers.");
-    }
-    // @Override
-    // public String getInfo() {
-    // return super.getInfo();
-    // }
+        System.out.println("Монах " + name + " применил заклинание.");
+    } // метод находится в работе
 }
