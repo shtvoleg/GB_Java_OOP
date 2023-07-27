@@ -21,8 +21,7 @@ public abstract class Unit implements Game_interface, Comparable<Unit> {
     protected Coordinates coordinates; // текущие координаты на доске
 
     // конструктор
-    protected Unit(Role role, String name, int maxHealth, int speed, int range, int x, int y)
-    {
+    protected Unit(Role role, String name, int maxHealth, int speed, int range, int x, int y) {
         this.role = role;
         this.name = name;
         this.maxHealth = this.health = maxHealth;
@@ -78,7 +77,7 @@ public abstract class Unit implements Game_interface, Comparable<Unit> {
                 result = unit;
             }
         }
-        return  result;
+        return result;
     }
 
     // двигаться в сторону target, с учетом занятости клеток персонажами из units
@@ -123,7 +122,8 @@ public abstract class Unit implements Game_interface, Comparable<Unit> {
         return role + " " + name + " " + coordinates + " " + status + " HP:" + health + "/" + maxHealth;
     }
 
-    // сравнение юнитов по их скорости, или запасу оставшегося здоровья, если скорости равны
+    // сравнение юнитов по их скорости, или запасу оставшегося здоровья, если
+    // скорости равны
     @Override
     public int compareTo(Unit unit) {
         int cmp = Integer.compare(speed, unit.speed);

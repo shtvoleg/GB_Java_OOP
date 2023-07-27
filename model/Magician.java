@@ -3,7 +3,7 @@ package model;
 import java.util.ArrayList;
 
 /*
-Класс Мог - наследник класса Заклинатель
+Класс Маг - наследник класса Заклинатель
 */
 
 public class Magician extends Spirit {

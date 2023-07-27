@@ -3,7 +3,7 @@ package model;
 import java.util.ArrayList;
 
 /*
-Класс Священник - наследник класса Заклинатель
+Класс Священник (Монах) - наследник класса Заклинатель
 */
 
 public class Priest extends Spirit {
@@ -18,7 +18,8 @@ public class Priest extends Spirit {
             double minHpRatio = 1;
             for (Unit unit : units) {
                 // ищем наиболее раненого (но живого)
-                if (!unit.status.equals(Status.Dead) && !unit.role.equals(Role.Magician) && !unit.role.equals(Role.Priest)) {
+                if (!unit.status.equals(Status.Dead) && !unit.role.equals(Role.Magician)
+                        && !unit.role.equals(Role.Priest)) {
                     double hpRatio = (double) unit.getHealth() / unit.getMaxHealth();
                     if (hpRatio < minHpRatio) {
                         minHpRatio = hpRatio;

@@ -29,7 +29,8 @@ public class Peasant extends Unit {
         if (!status.equals(Status.Frozen)) {
             for (Unit unit : allies) {
                 // ищем лучника, которому нужна стрела
-                if (!unit.status.equals(Status.Frozen) && unit.role.equals(Role.Archer) && ((Archer) unit).getShots() == 0) {
+                if (!unit.status.equals(Status.Frozen) && unit.role.equals(Role.Archer)
+                        && ((Archer) unit).getShots() == 0) {
                     bringArrow((Archer) unit);
                     status = Status.Busy;
                     return;
