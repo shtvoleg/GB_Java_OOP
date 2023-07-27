@@ -1,149 +1,153 @@
-/*Объектно-ориентированное программирование (семинары)
-Обучающийся: ШИТОВ Олег Владимирович, "Разработчик Python", поток 4544, будни, утро.  15.07.2023.
+/*
+Объектно-ориентированное программирование (семинары)
+Реализовать игру на Java с ООП. В игре участвуют 2 команды, в каждой по 10 участников,
+каждый участник имеет случайную роль из числа семи установленных.
 
-*Урок 1. Принципы ООП: Инкапсуляция, наследование, полиморфизм
-
-Проанализировать и описать персонажей: Маг, Священник (или Монах), Разбойник, Копейщик, Снайпер, Лучник (или Арбалетчик), Крестьянин.
-На базе описания персонажей описать простейшую иерархию классов.
-В основной программе создать по одному экземпляру каждого класса.
-
-*Урок 2. Принципы ООП Абстракция и интерфейсы. Пример проектирования
-
-Добавить файл с описанием интерфейса. В котором описать два метода, void step(); и String getInfo();
-Реализовать интерфейс в абстрактном классе и в наследниках так, чтобы getInfo возвращал тип персонажа.
-Создать два списка в классе main. В каждый из списков добавить по десять случайных экземпляров наследников BaseHero.
-Удалить ненужные методы из абстрактного класса, если такие есть.
-В main пройти по спискам и вызвать у всех персонажей getInfo.
-
-*Урок 3. Некоторые стандартные интерфейсы Java и примеры их использования
-
-Создать класс с описанием координат, x и y.
-Добавить в абстрактный класс поле с координатами и пробросить его инициализацию до конструкторов персонажей:
-    Farmer farmer = new Farmer(getName(), x, y);
-Найти среди противников ближайшего и вывести расстояние до него и его имя в консоль.
-
-*Урок 4. ООП: Обобщения. ч1
-
-Лучники.
-1.Если жизни 0, вернуть управление.
-2.Если стрел 0, вернуть управление.
-3.Найти ближайшего противника.
-4.Нанести ему среднее повреждение.
-5.Если среди своих есть крестьянин, то вернуть управление.
-6.Уменьшить кол-во стрел на одну и вернуть управление.
-Вызывать персонажей из обеих комманд в порядке инициативы.
-
+Основной модуль
 */
 
-import com.sun.source.util.SourcePositions;
+import model.*;
+import ui.Board;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Comparator;
-import java.util.Collections;
+import java.util.Random;
+import java.util.Scanner;
 
 public class Role_game { // основной модуль
+    private static final Random rnd = new Random();
+    private static final int TEAM_SIZE = 10; // в обеих командах будет по 10 персонажей
 
     public static void main(String[] args) {
 
-        final int TEAM_SIZE = 10; // в обеих командах будет по 10 персонажей
-        int i;
+        ArrayList<Unit> team1 = createTeam(0); // Создаем команду 1
+        ArrayList<Unit> team2 = createTeam(9); // Создаем команду 2
+        ArrayList<Unit> robbers = spawnRobbers(2); // Создаем разбойников
 
-        ArrayList<Unit> team1 = team(TEAM_SIZE, 1); // создаём команду1
-        Collections.sort(team1, new Comparator<Unit>() { // упорядочиваем по скорости в обратном порядке
-            @Override
-            public int compare(Unit u1, Unit u2) {
-                return u2.getSpeed() - u1.getSpeed();
+        // Упорядочиваем команды
+        team1.sort(Comparator.reverseOrder());
+        team2.sort(Comparator.reverseOrder());
+
+        // противники для команды 1 = команда 2 + разбойники
+        ArrayList<Unit> team1Enemies = new ArrayList<>();
+        team1Enemies.addAll(team2);
+        team1Enemies.addAll(robbers);
+
+        // противники для команды 2 = команда 1 + разбойники
+        ArrayList<Unit> team2Enemies = new ArrayList<>();
+        team2Enemies.addAll(team1);
+        team2Enemies.addAll(robbers);
+
+        // противники для разбойников = команда 1 + команда 2
+        ArrayList<Unit> robbersEnemies = new ArrayList<>();
+        robbersEnemies.addAll(team1);
+        robbersEnemies.addAll(team2);
+
+        Board board = new Board(); // Доска
+        board.show(team1, team2, robbers); // отображаем первоначальное расположение
+
+        System.out.println("Ход - по нажатию <Enter>...");
+        Scanner in = new Scanner(System.in);
+        int winTeam = 0;
+        while (winTeam == 0) { // пока выигравший не определен
+
+            in.nextLine();
+
+            for (int i = 0; i < 10; i++) { // для всех членов каждой из команд
+                if (isTeamDead(team1)) { // если все члены команды 1 убиты
+                    winTeam = 2; // то команда 2 выиграла
+                    break;
+                } else if (isTeamDead(team2)) { // и наоборот
+                    winTeam = 1;
+                    break;
+                } else { // команды живы, делаем поочереди ходы
+                    team1.get(i).step(team1Enemies, team1);
+                    team2.get(i).step(team2Enemies, team2);
+                }
             }
-        });
 
-        System.out.println("**** Команда1: ****");
-        i = 1; // порядковый номер для печати
-        for (Unit unit : team1) {
-            System.out.printf("%d) %s\n", i++, unit.getInfo());
+            // ход разбойников
+            for (Unit unit : robbers)
+                unit.step(robbersEnemies, robbers);
+
+            board.show(team1, team2, robbers); // отобразить доску
         }
 
-        ArrayList<Unit> team2 = team(TEAM_SIZE, 10); // создаём команду2
-        Collections.sort(team2, new Comparator<Unit>() { // упорядочиваем по скорости в обратном порядке
-            @Override
-            public int compare(Unit u1, Unit u2) {
-                return u2.getSpeed() - u1.getSpeed();
-            }
-        });
-
-        System.out.println("\n**** Команда2: ****");
-        i = 1; // порядковый номер для печати
-        for (Unit unit : team2) {
-            System.out.printf("%d) %s\n", i++, unit.getInfo());
-        }
-
-        System.out.println("\n**** Расстояние до ближайшего соперника: ****");
-        team1.forEach(n -> n.step(team2, team1)); // ближайший соперник
+        System.out.printf("Команда %s выиграла\n", winTeam == 1 ? "зеленых" : "синих");
     }
 
-    public static ArrayList<Unit> team(int teamSize, int num) { // метод создаёт команду из числа <teamSize> случайно
-                                                                // выбранных персонажей, num = координата x
+    // создание команды
+    private static ArrayList<Unit> createTeam(int num) { // метод создаёт команду из числа <teamSize> случайно
+                                                                // выбранных персонажей, num = координата y
         ArrayList<Unit> team = new ArrayList<>();
 
-        for (int i = 0; i < teamSize; i++) {
-            int val = new Random().nextInt(7); // персонаж - случайный
+        for (int i = 0; i < TEAM_SIZE; i++) {
+            int val = rnd.nextInt(6); // персонаж - случайный
             switch (val) {
                 case (0):
-                    team.add(new Magician("Маг " + new Magician().getRandomName(), 100, 10, 0, num, i + 1));
-                    // team.add(new Magician( "Маг " + new Magician().getName(), num, i+1));
+                    team.add(new Magician(getRandomName(), 5, i, num));
                     break;
                 case (1):
-                    team.add(new Priest("Монах " + new Priest().getRandomName(), 100, 10, 0, num, i + 1));
+                    team.add(new Priest(getRandomName(), i, num));
                     break;
                 case (2):
-                    team.add(new Robber("Разбойник " + new Robber().getRandomName(), 100, 0, 1, 0, num, i + 1));
+                    team.add(new Spearman(getRandomName(), 2, i, num));
                     break;
                 case (3):
-                    team.add(new Spearman("Копейщик " + new Spearman().getRandomName(), 100, 0, 1, 0, num, i + 1));
+                    team.add(new Sniper(getRandomName(), 0, 8, i, num));
                     break;
                 case (4):
-                    team.add(new Sniper("Снайпер " + new Sniper().getRandomName(), 100, 0, 0, num, i + 1));
-                    break;
-                case (5):
-                    team.add(new Archer("Лучник " + new Archer().getRandomName(), 100, 0, 0, num, i + 1));
+                    team.add(new Archer(getRandomName(), 5, 5, i, num));
                     break;
                 default:
-                    team.add(new Peasant("Крестьянин " + new Peasant().getRandomName(), 100, 0, 0, num, i + 1));
+                    team.add(new Peasant(getRandomName(), i, num));
                     break;
             }
         }
         return team;
     }
+
+    // создание разбойников
+    private static ArrayList<Unit> spawnRobbers(int count) {
+        ArrayList<Unit> result = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            while (true) {
+                // выбираем случайные координаты на оставшихся ячейках доски
+                int x = rnd.nextInt(10);
+                int y = rnd.nextInt(8) + 1;
+                Coordinates coordinates = new Coordinates(x, y);
+
+                boolean duplicate = false;
+                // проверяем, что координата не занята другим разбойником
+                for (Unit unit : result) {
+                    if (unit.getCoordinates().equals(coordinates)) {
+                        duplicate = true;
+                        break;
+                    }
+                }
+
+                if (!duplicate) {
+                    // создаем нового разбойника
+                    result.add(new Robber(getRandomName(), 100, 1, 10, x, y));
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    // все ли члены команды мертвы?
+    public static boolean isTeamDead(ArrayList<Unit> team) {
+        for (Unit avengers : team) {
+            if (!avengers.getStatus().equals(Status.Dead))
+                return false;
+        }
+        return true;
+    }
+
+    // выбор случайного имени
+    private static String getRandomName() {
+        var names = Name.values();
+        return String.valueOf(names[rnd.nextInt(names.length)]);
+    }
 }
-/*
- * Пример применения:
- **** Команда1: ****
- * 1) Разбойник Виталик: скорость=1, x= 1, y= 3
- * 2) Разбойник Саша: скорость=1, x= 1, y= 6
- * 3) Разбойник Коля: скорость=1, x= 1, y= 7
- * 4) Лучник Люся: скорость=0, x= 1, y= 1
- * 5) Монах Вася: скорость=0, x= 1, y= 2
- * 6) Лучник Женя: скорость=0, x= 1, y= 4
- * 7) Снайпер Жорик: скорость=0, x= 1, y= 5
- * 8) Снайпер Боря: скорость=0, x= 1, y= 8
- * 9) Крестьянин Жорик: скорость=0, x= 1, y= 9
- * 10) Монах Люся: скорость=0, x= 1, y= 10
- **** 
- * Команда2: ****
- * 1) Разбойник Женя: скорость=1, x= 10, y= 3
- * 2) Копейщик Саша: скорость=1, x= 10, y= 4
- * 3) Разбойник Люся: скорость=1, x= 10, y= 7
- * 4) Копейщик Женя: скорость=1, x= 10, y= 10
- * 5) Крестьянин Вася: скорость=0, x= 10, y= 1
- * 6) Лучник Коля: скорость=0, x= 10, y= 2
- * 7) Монах Жорик: скорость=0, x= 10, y= 5
- * 8) Лучник Саша: скорость=0, x= 10, y= 6
- * 9) Крестьянин Серёжа: скорость=0, x= 10, y= 8
- * 10) Монах Эдик: скорость=0, x= 10, y= 9
- **** 
- * Расстояние до ближайшего соперника: ****
- * Разбойник Женя 9.0
- * Лучник Саша 9.0
- * Разбойник Люся 9.0
- */
